@@ -21,7 +21,19 @@ var Blog = mongoose.model('Blog', blogSchema);
 
 // RESTful Routes
 
+app.get('/', function(req, res){
+  res.redirect('/blogs');
+})
 
+app.get('/blogs', function(req, res){
+  Blog.find({}, function(err, blogs){
+    if(err){
+      console.log('Error!');
+    } else {
+      res.render('index', {blogs: blogs});
+    }
+  })
+})
 
 app.listen(3000, function(){
   console.log('Server is running on port 3000');
