@@ -1,7 +1,8 @@
-var express   = require('express'),
-app           = express(),
-mongoose      = require('mongoose'),
-bodyParser    = require('body-parser');
+var express     = require('express'),
+app             = express(),
+mongoose        = require('mongoose'),
+bodyParser      = require('body-parser'),
+methodOverride  = require('method-override');
 
 // Database and app setup
 mongoose.Promise = global.Promise;
@@ -9,6 +10,7 @@ mongoose.connect('mongodb://localhost/blog_app', { useMongoClient: true});
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride('_method'));
 
 // Mongoose model config
 var blogSchema = new mongoose.Schema({
@@ -62,6 +64,30 @@ app.get('/blogs/:id', function(req, res){
     }
   })
 })
+
+// Edit route
+app.get('/blogs/:id/edit', function(req, res){
+  Blog.findById(req.params.id, function(err, foundBlog){
+      if (err){
+        res.redirect('/blogs')
+      } else {
+        res.render('edit', {blog: foundBlog})
+      }
+  }); 
+})
+
+// Update route
+app.put('/blogs/:id',function(req, res){
+  Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, updatedBlog){
+    if (err){
+      res.redirect('/blogs');
+    } else {
+      res.redirect('/blogs/' + req.params.id);
+    }
+  })
+})
+
+
 
 app.listen(3000, function(){
   console.log('Server is running on port 3000');
