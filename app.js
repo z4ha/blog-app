@@ -6,8 +6,9 @@ expressSanitizer  = require('express-sanitizer'),
 methodOverride    = require('method-override');
 
 // Database and app setup
+var uri = process.env.DATABASE || 'mongodb://localhost/blog_app'
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/blog_app', { useMongoClient: true});
+mongoose.connect(uri, { useMongoClient: true});
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -102,6 +103,6 @@ app.delete('/blogs/:id', function(req, res){
   })
 })
 
-app.listen(3000, function(){
-  console.log('Server is running on port 3000');
+app.listen(process.env.PORT || 3000, process.env.IP, function(){
+  console.log('Server is running');
 })
